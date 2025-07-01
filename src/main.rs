@@ -36,41 +36,69 @@ impl Vehicle {
                     self.car.y -= self.speed;
                 }else if self.direction.as_str() == "down" {
                     self.car.y += self.speed;
-                }else {
+                }else if self.direction.as_str() == "left" {
+                    self.car.x -= self.speed;
+                } else if self.direction.as_str() == "right" {
+                    self.car.x += self.speed;
+                } else {
                     todo!();
                 }
             },
             "TurnRight" => {
                 if self.direction.as_str() == "up" {
-                    if self.car.y-15 <= 400 {
+                    if self.car.y <= 415 {
                     self.car.x += self.speed;
                     }else {
                         self.car.y -= self.speed;
                     }
                 }else if self.direction.as_str() == "down" {
-                    if self.car.y-15 >= 325 {
+                    if self.car.y >= 340 {
                         self.car.x -= self.speed;
                     }else {
                         self.car.y += self.speed;
                     }
-                }else {
+                }else if self.direction.as_str() == "left" {
+                    if self.car.x >= 515 {
+                        self.car.x -= self.speed;
+                    }else {
+                        self.car.y -= self.speed;
+                    }
+                } else if self.direction.as_str() == "right" {
+                    if self.car.x <= 435 {
+                        self.car.x += self.speed;
+                    }else {
+                        self.car.y += self.speed;
+                    }
+                }  else {
                     todo!();
                 }
             },
             "TurnLeft" => {
                 if self.direction.as_str() == "up" {
-                    if self.car.y-15 <= 325 {
+                    if self.car.y <= 340 {
                         self.car.x -= self.speed;
                     }else {
                         self.car.y -= self.speed;
                     }
                 }else if self.direction.as_str() == "down" {
-                    if self.car.y+15 >= 425 {
+                    if self.car.y >= 410 {
                         self.car.x += self.speed;
                     }else {
                         self.car.y += self.speed;
                     }
-                }else {
+                } else if self.direction.as_str() == "left" {
+                    if self.car.x >= 440 {
+                        self.car.x -= self.speed;
+                    }else {
+                        self.car.y += self.speed;
+                    }
+                } else if self.direction.as_str() == "right" {
+                    if self.car.x <= 510 {
+                        self.car.x += self.speed;
+                    }else {
+                        self.car.y -= self.speed;
+                    }
+                } else {
                     todo!();
                 }
             },
@@ -79,8 +107,10 @@ impl Vehicle {
     }
 
     fn is_off_screen(&self) -> bool {
-        self.car.y < -75  || self.car.x > 1000 || self.car.x < -75 || self.car.y > 800
+        self.car.y < -50  || self.car.x > 1050 || self.car.x < -50 || self.car.y > 850
     }
+
+
 }
 
 fn spawn_car(x : i32, y:i32, direction : &str) -> Vehicle {
@@ -100,7 +130,6 @@ fn spawn_car(x : i32, y:i32, direction : &str) -> Vehicle {
     Vehicle::new(car_rect, direction.to_owned(),random_route, color)
 }
 
-
 fn can_spawn_vehicle(vehicles: &Vec<Vehicle>, spawn_x: i32, spawn_y: i32) -> bool {
     let safe_distance = 100;
     for vehicle in vehicles {
@@ -112,6 +141,16 @@ fn can_spawn_vehicle(vehicles: &Vec<Vehicle>, spawn_x: i32, spawn_y: i32) -> boo
             },
             "down" => {
                 if (vehicle.car.y + spawn_y).abs() < safe_distance {
+                    return false;
+                }
+            },
+            "left" => {
+                if (vehicle.car.x - spawn_x).abs() < safe_distance {
+                    return false;
+                }
+            },
+            "right" => {
+                if (vehicle.car.x + spawn_x).abs() < safe_distance {
                     return false;
                 }
             },
@@ -132,8 +171,12 @@ fn main() {
  
     let mut canvas = window.into_canvas().build().unwrap();
 
-    // TODO: remeber in readme I should check if it's working windows and other os
-    let font = ttf_context.load_font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24).unwrap();
+    // TODO: check it later if it's working in all os
+    // Font setup (you may need to adjust path for your OS)
+    let font = ttf_context.load_font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
+        .or_else(|_| ttf_context.load_font("C:\\Windows\\Fonts\\arial.ttf", 24))
+        .or_else(|_| ttf_context.load_font("/System/Library/Fonts/Arial.ttf", 24))
+        .unwrap();
 
     let dir = font.render("↑ | ↓ | → | ← : Spawn a vehicle from the specified direction")
         .blended(Color::WHITE)
@@ -173,7 +216,7 @@ fn main() {
                 },
                 Event::KeyDown {keycode: Some(Keycode::Up), .. } => {
                     let spawn_x = 515;
-                    let spawn_y = 700;
+                    let spawn_y = 750;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
                         let new_car = spawn_car(spawn_x, spawn_y,"up");
                         vehicles.push(new_car);
@@ -184,6 +227,40 @@ fn main() {
                     let spawn_y = 0;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
                         let new_car = spawn_car(spawn_x, spawn_y,"down");
+                        vehicles.push(new_car);
+                    }
+                },
+                Event::KeyDown {keycode: Some(Keycode::Left), .. } => {
+                    let spawn_x = 950;
+                    let spawn_y = 335;
+                    if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
+                        let new_car = spawn_car(spawn_x, spawn_y,"left");
+                        vehicles.push(new_car);
+                    }
+                },
+                Event::KeyDown {keycode: Some(Keycode::Right), .. } => {
+                    let spawn_x = 10;
+                    let spawn_y = 415;
+                    if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
+                        let new_car = spawn_car(spawn_x, spawn_y,"right");
+                        vehicles.push(new_car);
+                    }
+                },
+                Event::KeyDown {keycode: Some(Keycode::R), .. } => {
+                    let directions = ["up", "down", "left", "right"];
+                    let mut rng = rand::rng();
+                    let direction = directions[rng.random_range(0..4)];
+
+                    let (spawn_x, spawn_y) = match direction {
+                        "up" => (515, 750),
+                        "down" => (440, 0),
+                        "left" => (950, 335),
+                        "right" => (10, 415),
+                        _ => (515, 750)
+                    };
+
+                    if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
+                        let new_car = spawn_car(spawn_x, spawn_y, direction);
                         vehicles.push(new_car);
                     }
                 },
@@ -215,9 +292,9 @@ fn main() {
         canvas.draw_line((575, 475), (1000, 475)).unwrap();
 
         // test
-        // canvas.set_draw_color(Color::YELLOW);
-        // canvas.draw_line((0, 200), (1000, 200)).unwrap();
-        // canvas.draw_line((0, 320), (1000, 320)).unwrap();  
+        canvas.set_draw_color(Color::YELLOW);
+        canvas.draw_line((0, 500), (1000, 500)).unwrap();
+        canvas.draw_line((0, 450), (1000, 450)).unwrap();  
 
         canvas.copy(&texture_dir, None, Some(Rect::new(10, 10, 390, 30))).unwrap();
         canvas.copy(&texture_r, None, Some(Rect::new(10, 40, 260, 30))).unwrap();
