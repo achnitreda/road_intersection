@@ -34,38 +34,44 @@ impl Vehicle {
             "GoStraight" => {
                 if self.direction.as_str() == "up" {
                     self.car.y -= self.speed;
-                }else {
+                }else if self.direction.as_str() == "down" {
                     self.car.y += self.speed;
+                }else {
+                    todo!();
                 }
             },
             "TurnRight" => {
                 if self.direction.as_str() == "up" {
-                    if self.car.y <= 400 {
+                    if self.car.y-15 <= 400 {
                     self.car.x += self.speed;
                     }else {
                         self.car.y -= self.speed;
                     }
-                }else {
-                    if self.car.y >= 400 {
-                        self.car.x += self.speed;
+                }else if self.direction.as_str() == "down" {
+                    if self.car.y-15 >= 325 {
+                        self.car.x -= self.speed;
                     }else {
                         self.car.y += self.speed;
                     }
+                }else {
+                    todo!();
                 }
             },
             "TurnLeft" => {
                 if self.direction.as_str() == "up" {
-                    if self.car.y <= 325 {
+                    if self.car.y-15 <= 325 {
                         self.car.x -= self.speed;
                     }else {
                         self.car.y -= self.speed;
                     }
-                }else {
-                    if self.car.y >= 325 {
-                        self.car.x -= self.speed;
+                }else if self.direction.as_str() == "down" {
+                    if self.car.y+15 >= 425 {
+                        self.car.x += self.speed;
                     }else {
                         self.car.y += self.speed;
                     }
+                }else {
+                    todo!();
                 }
             },
             _ => {}
@@ -90,7 +96,7 @@ fn spawn_car(x : i32, y:i32, direction : &str) -> Vehicle {
         _ => Color::WHITE,
     };
 
-    let car_rect = Rect::new(x,y, 75, 75);
+    let car_rect = Rect::new(x,y, 50, 50);
     Vehicle::new(car_rect, direction.to_owned(),random_route, color)
 }
 
@@ -166,15 +172,15 @@ fn main() {
                     break 'running
                 },
                 Event::KeyDown {keycode: Some(Keycode::Up), .. } => {
-                    let spawn_x = 500;
-                    let spawn_y = 725;
+                    let spawn_x = 515;
+                    let spawn_y = 700;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
                         let new_car = spawn_car(spawn_x, spawn_y,"up");
                         vehicles.push(new_car);
                     }
                 },
                 Event::KeyDown {keycode: Some(Keycode::Down), .. } => {
-                    let spawn_x = 425;
+                    let spawn_x = 440;
                     let spawn_y = 0;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y) {
                         let new_car = spawn_car(spawn_x, spawn_y,"down");
@@ -185,27 +191,33 @@ fn main() {
             }
         }
         
-        canvas.set_draw_color(Color::WHITE);
-        // North-South road (vertical)
-        canvas.draw_line((500, 0), (500, 800)).unwrap();
-        canvas.draw_line((575, 0), (575, 800)).unwrap();
-        canvas.draw_line((425, 0), (425, 800)).unwrap();
-        // East-West road (horizontal) 
-        canvas.draw_line((0, 400), (1000, 400)).unwrap();
-        canvas.draw_line((0, 325), (1000, 325)).unwrap();
-        canvas.draw_line((0, 475), (1000, 475)).unwrap();
-
-        // test
-        canvas.set_draw_color(Color::YELLOW);
-        canvas.draw_line((0, 200), (1000, 200)).unwrap();
-        canvas.draw_line((0, 320), (1000, 320)).unwrap();
-
         canvas.set_draw_color(Color::RED);
         canvas.draw_rect(light_ne).unwrap();  
         canvas.draw_rect(light_nw).unwrap();
         canvas.set_draw_color(Color::GREEN);
         canvas.draw_rect(light_se).unwrap();  
-        canvas.draw_rect(light_sw).unwrap();   
+        canvas.draw_rect(light_sw).unwrap(); 
+
+        canvas.set_draw_color(Color::WHITE);
+        // North-South road (vertical)
+        canvas.draw_line((500, 0), (500, 325)).unwrap();
+        canvas.draw_line((500, 475), (500, 800)).unwrap();
+        canvas.draw_line((575, 0), (575, 325)).unwrap();
+        canvas.draw_line((575, 475), (575, 800)).unwrap();
+        canvas.draw_line((425, 0), (425, 325)).unwrap();
+        canvas.draw_line((425, 475), (425, 800)).unwrap();
+        // East-West road (horizontal) 
+        canvas.draw_line((0, 400), (425, 400)).unwrap();
+        canvas.draw_line((575, 400), (1000, 400)).unwrap();
+        canvas.draw_line((0, 325), (425, 325)).unwrap();
+        canvas.draw_line((575, 325), (1000, 325)).unwrap();
+        canvas.draw_line((0, 475), (425, 475)).unwrap();
+        canvas.draw_line((575, 475), (1000, 475)).unwrap();
+
+        // test
+        // canvas.set_draw_color(Color::YELLOW);
+        // canvas.draw_line((0, 200), (1000, 200)).unwrap();
+        // canvas.draw_line((0, 320), (1000, 320)).unwrap();  
 
         canvas.copy(&texture_dir, None, Some(Rect::new(10, 10, 390, 30))).unwrap();
         canvas.copy(&texture_r, None, Some(Rect::new(10, 40, 260, 30))).unwrap();
