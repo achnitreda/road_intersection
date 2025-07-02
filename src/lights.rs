@@ -1,4 +1,4 @@
-use crate::traffic::*;
+use crate::{Roads::Roads, traffic::*};
 use sdl2::{hint::set, pixels::Color};
 
 #[derive(PartialEq, Clone, Debug)]
@@ -27,7 +27,7 @@ impl AdvancedTrafficSystem {
         }
     }
 
-    pub fn update(&mut self, vehicles: &Vec<Vehicle>) {
+    pub fn update(&mut self, vehicles: &Vec<Vehicle>, roads: &Roads) {
         self.timer += 1;
 
         let should_extend = self.should_extend_phase(vehicles);
@@ -37,7 +37,7 @@ impl AdvancedTrafficSystem {
         }
 
         if self.timer >= self.phase_duration && !should_extend {
-            self.next_phase();
+            self.next_phase(roads);
             self.timer = 0;
             self.is_timeover = false;
         }
@@ -56,7 +56,21 @@ impl AdvancedTrafficSystem {
             .any(|v| v.direction == current_direction && v.is_in_intersection())
     }
 
-    pub fn next_phase(&mut self) {
+    pub fn next_phase(&mut self, roads: &Roads) {
+        let max = roads.full(); // (String, i32)
+
+        if max.1 >= 4 && self.timer.saturating_sub(self.phase_duration) < 30 {
+            self.phase = match max.0.as_str() {
+                "up" => TrafficPhase::Up,
+                "down" => TrafficPhase::Down,
+                "left" => TrafficPhase::Left,
+                "right" => TrafficPhase::Right,
+                _ => self.phase.clone(), // fallback if somehow invalid
+            };
+            return; // Done updating phase
+        }
+
+        // Rotate to the next phase
         self.phase = match self.phase {
             TrafficPhase::Up => TrafficPhase::Down,
             TrafficPhase::Down => TrafficPhase::Left,

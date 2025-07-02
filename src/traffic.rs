@@ -1,7 +1,7 @@
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Vehicle {
     pub car: Rect,
     pub direction: String,

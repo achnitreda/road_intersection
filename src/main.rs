@@ -8,6 +8,7 @@ mod traffic;
 use traffic::*;
 mod lights;
 use lights::*;
+mod Roads;
 
 fn spawn_car(x: i32, y: i32, direction: &str) -> Vehicle {
     let routes = ["TurnLeft", "TurnRight", "GoStraight"];
@@ -21,7 +22,6 @@ fn spawn_car(x: i32, y: i32, direction: &str) -> Vehicle {
         "GoStraight" => Color::GREY,
         _ => Color::WHITE,
     };
-
     let car_rect = Rect::new(x, y, 50, 50);
     Vehicle::new(car_rect, direction.to_owned(), random_route, color)
 }
@@ -95,7 +95,7 @@ fn main() {
     canvas.present();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
-
+    let mut Roads = Roads::Roads::new();
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
@@ -128,7 +128,8 @@ fn main() {
                     let spawn_y = 700;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y, "up") {
                         let new_car = spawn_car(spawn_x, spawn_y, "up");
-                        vehicles.push(new_car);
+                        vehicles.push(new_car.clone());
+                        Roads.push(new_car.clone());
                     }
                 }
                 Event::KeyDown {
@@ -139,7 +140,8 @@ fn main() {
                     let spawn_y = 0;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y, "down") {
                         let new_car = spawn_car(spawn_x, spawn_y, "down");
-                        vehicles.push(new_car);
+                        vehicles.push(new_car.clone());
+                        Roads.push(new_car.clone());
                     }
                 }
                 Event::KeyDown {
@@ -150,7 +152,8 @@ fn main() {
                     let spawn_y = 335;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y, "left") {
                         let new_car = spawn_car(spawn_x, spawn_y, "left");
-                        vehicles.push(new_car);
+                        vehicles.push(new_car.clone());
+                        Roads.push(new_car.clone());
                     }
                 }
                 Event::KeyDown {
@@ -161,7 +164,8 @@ fn main() {
                     let spawn_y = 415;
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y, "right") {
                         let new_car = spawn_car(spawn_x, spawn_y, "right");
-                        vehicles.push(new_car);
+                        vehicles.push(new_car.clone());
+                        Roads.push(new_car.clone());
                     }
                 }
                 Event::KeyDown {
@@ -182,7 +186,8 @@ fn main() {
 
                     if can_spawn_vehicle(&vehicles, spawn_x, spawn_y, direction) {
                         let new_car = spawn_car(spawn_x, spawn_y, direction);
-                        vehicles.push(new_car);
+                        vehicles.push(new_car.clone());
+                        Roads.push(new_car.clone());
                     }
                 }
                 _ => {}
@@ -190,7 +195,7 @@ fn main() {
         }
 
         // Update traffic light system
-        traffic_system.update(&vehicles);
+        traffic_system.update(&vehicles, &Roads);
 
         let (up_color, down_color, left_color, right_color) = traffic_system.get_light_colors();
 
@@ -262,6 +267,11 @@ fn main() {
             // Only update if vehicle can proceed and no vehicle ahead
             if can_proceed && !has_vehicle_ahead {
                 vehicles[i].update();
+            }
+        }
+        for vec in &vehicles {
+            if vec.clone().is_off_screen() {
+                Roads.pop(&vec);
             }
         }
 
