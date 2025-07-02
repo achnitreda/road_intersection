@@ -1,8 +1,8 @@
 [package]
 name = "road_intersection"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-sdl2 = {version = "0.34", features = ["ttf"]}
 rand = "0.9.1"
+sdl2= "0.34.3"
