@@ -14,6 +14,7 @@ pub struct AdvancedTrafficSystem {
     phase: TrafficPhase,
     timer: u32,
     phase_duration: u32,
+    is_timeover: bool,
 }
 
 impl AdvancedTrafficSystem {
@@ -22,6 +23,7 @@ impl AdvancedTrafficSystem {
             phase: TrafficPhase::Up,
             timer: 0,
             phase_duration: 240,
+            is_timeover: false,
         }
     }
 
@@ -29,10 +31,15 @@ impl AdvancedTrafficSystem {
         self.timer += 1;
 
         let should_extend = self.should_extend_phase(vehicles);
+        if self.timer >= self.phase_duration {
+            self.is_timeover = true;
+            // self.next_phase();
+        }
 
         if self.timer >= self.phase_duration && !should_extend {
             self.next_phase();
             self.timer = 0;
+            self.is_timeover = false;
         }
     }
 
@@ -77,6 +84,9 @@ impl AdvancedTrafficSystem {
     }
 
     pub fn get_light_colors(&self) -> (Color, Color, Color, Color) {
+        if self.is_timeover {
+            return (Color::RED, Color::RED, Color::RED, Color::RED);
+        }
         match self.phase {
             TrafficPhase::Down => (Color::GREEN, Color::RED, Color::RED, Color::RED),
             TrafficPhase::Up => (Color::RED, Color::GREEN, Color::RED, Color::RED),
