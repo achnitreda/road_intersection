@@ -13,6 +13,7 @@ enum TrafficPhase {
     Left,  
 }
 
+#[derive(Debug)]
 struct Vehicle {
     car: Rect,
     direction: String,
@@ -237,9 +238,8 @@ fn spawn_car(x: i32, y: i32, direction: &str) -> Vehicle {
 
 fn can_spawn_vehicle(vehicles: &Vec<Vehicle>, spawn_x: i32, spawn_y: i32, direction: &str) -> bool {
     let safe_distance = 100;
-    
+
     for vehicle in vehicles {
-        // Only check vehicles in the same lane
         let distance = match direction {
             "up" => {
                 if vehicle.direction == "up" && (vehicle.car.x - spawn_x).abs() < 30 {
@@ -290,7 +290,8 @@ fn main() {
  
     let mut canvas = window.into_canvas().build().unwrap();
 
-    // Cross-platform font loading
+    // TODO: check it later if it's working in all os
+    // Font setup (you may need to adjust path for your OS)
     let font = ttf_context.load_font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
         .or_else(|_| ttf_context.load_font("C:\\Windows\\Fonts\\arial.ttf", 20))
         .or_else(|_| ttf_context.load_font("/System/Library/Fonts/Arial.ttf", 20))
@@ -441,7 +442,7 @@ fn main() {
                     if i == j {
                         return false; // Skip self
                     }
-                    // explain to me this part
+
                     let safe_distance = 60;
                     match current_vehicle.direction.as_str() {
                         "up" => {
