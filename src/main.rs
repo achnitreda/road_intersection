@@ -282,7 +282,7 @@ fn can_spawn_vehicle(vehicles: &Vec<Vehicle>, spawn_x: i32, spawn_y: i32, direct
 fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-    let ttf_context = sdl2::ttf::init().unwrap();
+    // let ttf_context = sdl2::ttf::init().unwrap();
  
     let window = video_subsystem.window("Road Intersection", 1000, 800)
         .build()
@@ -292,25 +292,25 @@ fn main() {
 
     // TODO: check it later if it's working in all os
     // Font setup (you may need to adjust path for your OS)
-    let font = ttf_context.load_font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
-        .or_else(|_| ttf_context.load_font("C:\\Windows\\Fonts\\arial.ttf", 20))
-        .or_else(|_| ttf_context.load_font("/System/Library/Fonts/Arial.ttf", 20))
-        .unwrap();
+    // let font = ttf_context.load_font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
+    //     .or_else(|_| ttf_context.load_font("C:\\Windows\\Fonts\\arial.ttf", 20))
+    //     .or_else(|_| ttf_context.load_font("/System/Library/Fonts/Arial.ttf", 20))
+    //     .unwrap();
 
-    let dir = font.render("↑ | ↓ | → | ← : Spawn vehicle from specified direction")
-        .blended(Color::WHITE)
-        .unwrap();
-    let random = font.render("R : Spawn vehicle from random direction")
-        .blended(Color::WHITE)
-        .unwrap();
-    let exit = font.render("ESC : Exit simulation")
-        .blended(Color::WHITE)
-        .unwrap();
+    // let dir = font.render("↑ | ↓ | → | ← : Spawn vehicle from specified direction")
+    //     .blended(Color::WHITE)
+    //     .unwrap();
+    // let random = font.render("R : Spawn vehicle from random direction")
+    //     .blended(Color::WHITE)
+    //     .unwrap();
+    // let exit = font.render("ESC : Exit simulation")
+    //     .blended(Color::WHITE)
+    //     .unwrap();
 
-    let texture_creator = canvas.texture_creator();
-    let texture_dir = texture_creator.create_texture_from_surface(&dir).unwrap();
-    let texture_r = texture_creator.create_texture_from_surface(&random).unwrap();
-    let texture_exit = texture_creator.create_texture_from_surface(&exit).unwrap();
+    // let texture_creator = canvas.texture_creator();
+    // let texture_dir = texture_creator.create_texture_from_surface(&dir).unwrap();
+    // let texture_r = texture_creator.create_texture_from_surface(&random).unwrap();
+    // let texture_exit = texture_creator.create_texture_from_surface(&exit).unwrap();
 
     let mut vehicles: Vec<Vehicle> = Vec::new();
     let mut traffic_system = AdvancedTrafficSystem::new();
@@ -429,9 +429,9 @@ fn main() {
         canvas.draw_line((0, 475), (425, 475)).unwrap();
         canvas.draw_line((575, 475), (1000, 475)).unwrap();
 
-        canvas.copy(&texture_dir, None, Some(Rect::new(10, 10, 340, 25))).unwrap();
-        canvas.copy(&texture_r, None, Some(Rect::new(10, 35, 240, 25))).unwrap();
-        canvas.copy(&texture_exit, None, Some(Rect::new(10, 60, 120, 25))).unwrap();
+        // canvas.copy(&texture_dir, None, Some(Rect::new(10, 10, 340, 25))).unwrap();
+        // canvas.copy(&texture_r, None, Some(Rect::new(10, 35, 240, 25))).unwrap();
+        // canvas.copy(&texture_exit, None, Some(Rect::new(10, 60, 120, 25))).unwrap();
 
         // Update vehicles with traffic light awareness (using indices to avoid borrowing conflicts)
         for i in 0..vehicles.len() {
